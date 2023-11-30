@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <script src="utils.js"></script>
+    <title>Dynamsoft RESTful API Demo</title>
+</head>
+
+<body>
+    <h1>RESTful API Demo for Dynamsoft Products</h1>
+    <div id="loading-indicator" class="loading-indicator">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Get Dynamsoft Products -->
+    <div class="connection">
+        <div class="row">
+            <div>
+                <label>Enter host address: </label>
+                <input type="text" id="host" placeholder="http://192.168.8.72:3000/">
+                <button onclick="connect()">connect</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+                <select onchange="selectChanged()" id="dropdown">
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Web TWAIN -->
+    <div class="container" id="dwt">
+        <div class="row">
+            <div>
+                <button onclick="getDevices()">Get Devices</button>
+                <select id="sources">
+                </select>
+                <button onclick="acquireImage()">Scan Documents</button>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="full-img">
+                <img id="scanner-image">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="thumb-bar" id="thumb-bar">
+                <div class="thumb-box" id="thumb-box">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamsoft Barcode Reader -->
+    <div class="container" id="dbr">
+        <div class="row">
+            <div>
+                <input type="file" id="barcode-file" accept="image/*" />
+                <button onclick="decodeBarcode()">Read Barcode</button>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div id="imageview">
+                <img id="barcode-image" src="https://via.placeholder.com/640x480" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+                <textarea id="barcode-result"></textarea>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Dynamsoft Label Recognizer -->
+    <div class="container" id="dlr">
+        <div class="row">
+            <div>
+                <input type="file" id="mrz-file" accept="image/*" />
+                <button onclick="detectMrz()">Detect MRZ</button>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div id="imageview">
+                <img id="mrz-image" src="https://via.placeholder.com/640x480" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+                <textarea id="mrz-result"></textarea>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Dynamsoft Document Normalizer -->
+    <div class="container" id="ddn">
+        <div class="row">
+            <div>
+                <input type="file" id="document-file" accept="image/*" />
+                <button onclick="rectifyDocument()">Rectify Document</button>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div id="imageview">
+                <img id="document-image" src="https://via.placeholder.com/640x480" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+                <textarea id="document-result"></textarea>
+                <img id="document-rectified-image" />
+            </div>
+        </div>
+
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
