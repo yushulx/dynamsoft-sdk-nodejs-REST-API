@@ -314,26 +314,23 @@ async function rectifyDocument() {
         body: formData
     });
 
-    if (response.headers.get('Content-Type').includes('text/plain')) {
-        let data = await response.text();
-        document.getElementById('document-result').innerHTML = data;
+    if (response.status == 200) {
+        const result = await response.json();
+        let img = document.getElementById('document-rectified-image');
+        img.src = result['image'];
+        let divElement = document.getElementById("document-rectified-image");
+        divElement.style.display = "block";
+
+        divElement = document.getElementById("document-result");
+        divElement.style.display = "none";
+    }
+    else {
+        document.getElementById('document-result').innerHTML = await response.text();
 
         let divElement = document.getElementById("document-result");
         divElement.style.display = "block";
 
         divElement = document.getElementById("document-rectified-image");
-        divElement.style.display = "none";
-    }
-    else if (response.headers.get('Content-Type').includes('application/octet-stream')) {
-        let data = await response.blob();
-        let img = document.getElementById('document-rectified-image');
-        let url = URL.createObjectURL(data);
-        img.src = url;
-
-        let divElement = document.getElementById("document-rectified-image");
-        divElement.style.display = "block";
-
-        divElement = document.getElementById("document-result");
         divElement.style.display = "none";
     }
 }

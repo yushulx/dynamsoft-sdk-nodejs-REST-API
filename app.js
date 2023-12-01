@@ -156,7 +156,6 @@ app.post('/dynamsoft/ddn/rectifyDocument', upload.single('image'), async (req, r
         let results = await docRectifier.detectFileAsync(file.path);
         let result = results[0];
         result = await docRectifier.normalizeFileAsync(file.path, result['x1'], result['y1'], result['x2'], result['y2'], result['x3'], result['y3'], result['x4'], result['y4']);
-
         let data = result['data']
         let width = result['width']
         let height = result['height']
@@ -166,23 +165,24 @@ app.post('/dynamsoft/ddn/rectifyDocument', upload.single('image'), async (req, r
             data[i] = blue;
             data[i + 2] = red;
         }
+
+        const timestamp = Date.now();
+
         sharp(data, {
             raw: {
                 width: width,
                 height: height,
                 channels: 4
             }
-        })
-            .jpeg() // Convert to JPEG
-            .toBuffer() // Convert to buffer
-            .then(jpegBuffer => {
-                res.set('Content-Type', 'application/octet-stream');
-                res.send(jpegBuffer);
-            })
-            .catch(err => {
-                console.error(err);
-                res.status(500).send('An error occurred while processing the image.');
-            });
+        }).toFile('uploads/' + timestamp + '.jpeg', (err, info) => {
+            if (err) {
+                console.error('Error:', err);
+            } else {
+                res.send(JSON.stringify({
+                    'image': 'uploads/' + timestamp + '.jpeg'
+                }));
+            }
+        });
     }
     catch (err) {
         console.error(err);
