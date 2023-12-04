@@ -44,3 +44,4 @@ This repository demonstrates how to build RESTful APIs with Node.js for Dynamic 
     ```
 
 4. Open a web browser and visit `http://localhost:3000/`.
+    ![image](https://github.com/yushulx/dynamsoft-sdk-nodejs-REST-API/assets/2202306/a607edc8-73ff-4b93-b956-c9bc669b8970)
