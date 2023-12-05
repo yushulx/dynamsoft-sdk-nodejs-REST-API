@@ -205,21 +205,32 @@ document.getElementById("barcode-file").addEventListener("change", function () {
 });
 
 async function decodeBarcode() {
-    let url = host + 'dynamsoft/dbr/DecodeBarcode';
+    // let url = host + 'dynamsoft/dbr/DecodeBarcode';
 
-    const input = document.getElementById('barcode-file');
-    const file = input.files[0];
+    // const input = document.getElementById('barcode-file');
+    // const file = input.files[0];
 
-    if (!file) {
-        return;
-    }
+    // if (!file) {
+    //     return;
+    // }
 
-    const formData = new FormData();
-    formData.append('image', file);
+    // const formData = new FormData();
+    // formData.append('image', file);
 
+    // let response = await fetch(url, {
+    //     method: 'POST',
+    //     body: formData
+    // });
+
+    let url = host + 'dynamsoft/dbr/DecodeBarcode/base64';
+
+    let image = document.getElementById('barcode-image');
     let response = await fetch(url, {
         method: 'POST',
-        body: formData
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 'image': image.src })
     });
 
     if (response.headers.get('Content-Type').includes('application/json')) {

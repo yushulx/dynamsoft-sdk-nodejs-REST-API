@@ -116,9 +116,26 @@ app.post('/dynamsoft/dbr/DecodeBarcode', upload.single('image'), async (req, res
     }
 });
 
+app.post('/dynamsoft/dbr/DecodeBarcode/base64', async (req, res) => {
+    if (!req.body.image) {
+        return res.status(400).send('No file uploaded.');
+    }
+
+    let base64Data = req.body.image.replace(/^data:image\/\w+;base64,/, "");
+
+    try {
+        let result = await barcode4nodejs.decodeBase64Async(base64Data, barcode4nodejs.barcodeTypes);
+        console.log(result);
+        res.status(200).send(result);
+    }
+    catch (err) {
+        console.error(err);
+        return res.status(500).send('An error occurred while processing the image.');
+    }
+});
+
 // Dynamsoft Label Recognizer
 app.post('/dynamsoft/dlr/DetectMrz', upload.single('image'), async (req, res) => {
-    console.log('DetectMrz');
     const file = req.file;
 
     if (!file) {
