@@ -76,7 +76,7 @@ function switchProduct(name) {
 
 async function connect() {
     dropdown.innerHTML = "";
-    host = document.getElementById("host").value == "" ? placeholder : document.getElementById("host").value;
+    host = document.getElementById("host").value == "" ? '' : document.getElementById("host").value;
 
     try {
         const response = await fetch(host + 'dynamsoft/product', {
