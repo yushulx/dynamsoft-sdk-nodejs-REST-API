@@ -151,7 +151,7 @@ app.post('/dynamsoft/dlr/DetectMrz', upload.single('image'), async (req, res) =>
 
     try {
         let result = await mrzScanner.decodeFileAsync(file.path);
-        console.log(result);
+        // console.log(result);
         let output = "";
         if (result.length == 2) {
             output = mrzScanner.parseTwoLines(result[0].text, result[1].text);
@@ -159,6 +159,7 @@ app.post('/dynamsoft/dlr/DetectMrz', upload.single('image'), async (req, res) =>
         else if (result.length == 3) {
             output = mrzScanner.parseThreeLines(result[0].text, result[1].text, result[2].text);
         }
+        // let returnJson = JSON.stringify(output);
         console.log(output);
         res.status(200).send(output);
     }
@@ -168,7 +169,112 @@ app.post('/dynamsoft/dlr/DetectMrz', upload.single('image'), async (req, res) =>
     }
 });
 
+app.post('/dynamsoft/dlr/DetectMrz/base64', (req, res) => {
+    let jsonObject = req.body;
+    let size = Object.keys(jsonObject).length;
+    if (size == 0) {
+        return res.status(400).send('No file uploaded.');
+    }
+
+    Object.keys(jsonObject).forEach(key => {
+        let base64Image = jsonObject[key].split(';base64,').pop();
+        const imageBuffer = Buffer.from(base64Image, 'base64');
+
+        // Write buffer to a file
+        const timestamp = Date.now();
+        let filePath = 'uploads/' + timestamp;
+        fs.writeFile(filePath, imageBuffer, async (err) => {
+            if (err) {
+                console.error('Error writing file:', err);
+            } else {
+                console.log('File saved:', filePath);
+
+                try {
+                    let result = await mrzScanner.decodeFileAsync(filePath);
+                    // console.log(result);
+                    let output = "";
+                    if (result.length == 2) {
+                        output = mrzScanner.parseTwoLines(result[0].text, result[1].text);
+                    }
+                    else if (result.length == 3) {
+                        output = mrzScanner.parseThreeLines(result[0].text, result[1].text, result[2].text);
+                    }
+                    console.log(output);
+                    res.status(200).send(output);
+                }
+                catch (err) {
+                    console.error(err);
+                    return res.status(500).send('An error occurred while processing the image.');
+                }
+            }
+        });
+
+
+    });
+});
+
 // Dynamsoft Document Normalizer
+app.post('/dynamsoft/ddn/rectifyDocument/base64', upload.single('image'), async (req, res) => {
+    let jsonObject = req.body;
+    let size = Object.keys(jsonObject).length;
+    if (size == 0) {
+        return res.status(400).send('No file uploaded.');
+    }
+
+    Object.keys(jsonObject).forEach(key => {
+        let base64Image = jsonObject[key].split(';base64,').pop();
+        const imageBuffer = Buffer.from(base64Image, 'base64');
+
+        // Write buffer to a file
+        let timestamp = Date.now();
+        let filePath = 'uploads/' + timestamp;
+        fs.writeFile(filePath, imageBuffer, async (err) => {
+            if (err) {
+                console.error('Error writing file:', err);
+            } else {
+                console.log('File saved:', filePath);
+
+                try {
+                    let results = await docRectifier.detectFileAsync(filePath);
+                    let result = results[0];
+                    result = await docRectifier.normalizeFileAsync(filePath, result['x1'], result['y1'], result['x2'], result['y2'], result['x3'], result['y3'], result['x4'], result['y4']);
+                    let data = result['data']
+                    let width = result['width']
+                    let height = result['height']
+                    for (let i = 0; i < data.length; i += 4) {
+                        const red = data[i];
+                        const blue = data[i + 2];
+                        data[i] = blue;
+                        data[i + 2] = red;
+                    }
+
+                    timestamp = Date.now();
+
+                    sharp(data, {
+                        raw: {
+                            width: width,
+                            height: height,
+                            channels: 4
+                        }
+                    }).toFile('uploads/' + timestamp + '.jpeg', (err, info) => {
+                        if (err) {
+                            console.error('Error:', err);
+                        } else {
+                            res.send(JSON.stringify({
+                                'image': 'uploads/' + timestamp + '.jpeg'
+                            }));
+                        }
+                    });
+                }
+                catch (err) {
+                    console.error(err);
+                    return res.status(500).send('An error occurred while processing the image.');
+                }
+            }
+        });
+    });
+});
+
 app.post('/dynamsoft/ddn/rectifyDocument', upload.single('image'), async (req, res) => {
     const file = req.file;
 
