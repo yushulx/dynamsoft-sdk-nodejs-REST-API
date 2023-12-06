@@ -116,22 +116,29 @@ app.post('/dynamsoft/dbr/DecodeBarcode', upload.single('image'), async (req, res
     }
 });
 
-app.post('/dynamsoft/dbr/DecodeBarcode/base64', async (req, res) => {
-    if (!req.body.image) {
+app.post('/dynamsoft/dbr/DecodeBarcode/base64', (req, res) => {
+    let jsonObject = req.body;
+    let size = Object.keys(jsonObject).length;
+    if (size == 0) {
         return res.status(400).send('No file uploaded.');
     }
 
-    let base64Data = req.body.image.replace(/^data:image\/\w+;base64,/, "");
-
-    try {
-        let result = await barcode4nodejs.decodeBase64Async(base64Data, barcode4nodejs.barcodeTypes);
-        console.log(result);
-        res.status(200).send(result);
-    }
-    catch (err) {
-        console.error(err);
-        return res.status(500).send('An error occurred while processing the image.');
-    }
+    Object.keys(jsonObject).forEach(key => {
+        let base64Image = jsonObject[key].split(';base64,').pop();
+        try {
+            barcode4nodejs.decodeBase64Async(base64Image, barcode4nodejs.barcodeTypes).then((result) => {
+                console.log(result);
+                res.status(200).send(result);
+            }).catch((err) => {
+                console.error(err);
+                return res.status(500).send('An error occurred while processing the image.');
+            });
+        }
+        catch (err) {
+            console.error(err);
+            return res.status(500).send('An error occurred while processing the image.');
+        }
+    });
 });
 
 // Dynamsoft Label Recognizer
