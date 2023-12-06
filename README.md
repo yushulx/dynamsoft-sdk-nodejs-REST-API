@@ -51,3 +51,13 @@ https://github.com/yushulx/dynamsoft-sdk-nodejs-REST-API/assets/2202306/d85401ca
 
 4. Open a web browser and visit `http://localhost:3000/`.
     ![image](https://github.com/yushulx/dynamsoft-sdk-nodejs-REST-API/assets/2202306/a607edc8-73ff-4b93-b956-c9bc669b8970)
+
+## Microsoft Power App Demo
+The following API endpoints can empower low-code platforms.
+- `/dynamsoft/dbr/DecodeBarcode/base64` - Decodes barcodes from a base64 encoded image.
+- `/dynamsoft/dlr/DetectMrz/base64` - Detects Machine Readable Zones (MRZ) in a base64 encoded image.
+- `/dynamsoft/ddn/rectifyDocument/base64` - Rectifies document images from a base64 encoded input.
+
+https://github.com/yushulx/dynamsoft-sdk-nodejs-REST-API/assets/2202306/6160986e-5ebf-4f39-bd88-8bcebc105ae5
+
+
